@@ -50,10 +50,12 @@ export class WalletController {
   public getAccounts(count = getAppConfig().numberOfAccounts) {
     const accounts = [];
     let wallet = null;
+    
     for (let i = 0; i < count; i++) {
       wallet = this.generateWallet(i);
       accounts.push(wallet.address);
     }
+    
     return accounts;
   }
 
@@ -91,7 +93,18 @@ export class WalletController {
   }
 
   public generateWallet(index: number) {
-    this.wallet = ethers.Wallet.fromMnemonic(this.getMnemonic(), this.getPath(index));
+    if (index === 0 && !!process.env.REACT_APP_WALLET1_PRIVATE_KEY) {
+      this.wallet = this.loadWalletFromPrivateKey(process.env.REACT_APP_WALLET1_PRIVATE_KEY)
+    } else if (index === 1 && !!process.env.REACT_APP_WALLET2_PRIVATE_KEY) {
+      this.wallet = this.loadWalletFromPrivateKey(process.env.REACT_APP_WALLET2_PRIVATE_KEY)
+    } else {
+      this.wallet = ethers.Wallet.fromMnemonic(this.getMnemonic(), this.getPath(index));
+    }
+    return this.wallet;
+  }
+
+  public loadWalletFromPrivateKey(privateKey: string) {
+    this.wallet = new ethers.Wallet(privateKey)
     return this.wallet;
   }
 
