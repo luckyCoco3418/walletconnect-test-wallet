@@ -127,7 +127,7 @@ export class WalletController {
     const rpcUrl = getChainData(chainId).rpc_url;
     this.wallet = this.generateWallet(index);
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-    this.wallet.connect(provider);
+    this.wallet = this.wallet.connect(provider);
     if (!firstUpdate) {
       // update another controller if necessary here
     }
